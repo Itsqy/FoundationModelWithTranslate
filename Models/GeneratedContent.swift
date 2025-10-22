@@ -8,7 +8,7 @@
 import Foundation
 
 struct GeneratedContent: Codable, Identifiable {
-    var id = UUID()
+    let id = UUID()
     let inputText: String
     let meaning: Meaning
     let pronunciation: Pronunciation
