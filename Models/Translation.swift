@@ -1,40 +1,92 @@
 import Foundation
-import FoundationModels
 
-@Generable
-struct Translation: Equatable {
-    // Echo input for traceability
-    @Guide(description: "Original Indonesian sentence/paragraph.")
-    let source: String
-
-    // Final target strings
-    @Guide(description: "Main Javanese translation in requested register/dialect.")
-    let target: String
-
-    // Useful metadata for pedagogy & QA
-    @Guide(description: "Dialect/register used. E.g., Ngoko/Ngoko Alus/Krama/Krama Inggil.")
-    let register: String
-
-    @Guide(description: "Notes on tricky words, ambiguity, or cultural nuance. Keep short, bullet-like.")
-    let notes: String
-
-    @Guide(description: "Optional: literal gloss mapping Indonesian → Javanese for key words/phrases.")
-    let wordByWord: [Gloss]
-
-    @Guide(description: "2–3 short example sentences in the same register using the key vocabulary.")
-    @Guide(.count(2))
-    let examples: [String]
-
-    // Optional: write Aksara Jawa if you plan to support it later
-    @Guide(description: "Optional Aksara Jawa representation if requested, else empty.")
-    let hanacaraka: String
+// MARK: - Translation Models
+struct TranslationResult {
+    let originalText: String
+    let translatedText: String
+    let confidence: Double
+    let method: TranslationMethod
+    let dictionaryMatches: [DictionaryMatch]
+    let processingTime: TimeInterval
 }
 
-@Generable
-struct Gloss: Equatable {
-    let id: Int
-    let indo: String
-    let jawa: String
-    @Guide(description: "Short POS tag like n., v., adj. if helpful.")
-    let pos: String
+struct DictionaryMatch {
+    let javanese: String
+    let indonesian: String
+    let register: JavaneseRegister
+    let confidence: Double
+}
+
+enum TranslationMethod: String, CaseIterable {
+    case dictionary = "Dictionary"
+    case appleFoundation = "Apple Foundation"
+    case hybrid = "Hybrid"
+}
+
+enum JavaneseRegister: String, CaseIterable {
+    case ngoko = "ngoko"
+    case kramaAlus = "kramaalus"
+    case kramaInggil = "kramainggil"
+    
+    var displayName: String {
+        switch self {
+        case .ngoko: return "Ngoko"
+        case .kramaAlus: return "Ngoko Alus"
+        case .kramaInggil: return "Krama Inggil"
+        }
+    }
+}
+
+// MARK: - Dictionary Entry Model
+struct DictionaryEntry: Codable {
+    let indonesia: String
+    let kramaalus: String
+    let kramainggil: String
+    let ngoko: String
+    
+    func getTranslation(for register: JavaneseRegister) -> String {
+        switch register {
+        case .ngoko: return ngoko
+        case .kramaAlus: return kramaalus
+        case .kramaInggil: return kramainggil
+        }
+    }
+}
+
+// MARK: - Cloud Translation Models
+struct CloudTranslationRequest: Codable {
+    let text: String
+    let sourceLanguage: String
+    let targetLanguage: String
+    let register: String?
+}
+
+struct CloudTranslationResponse: Codable {
+    let translatedText: String
+    let confidence: Double
+    let processingTime: TimeInterval
+}
+
+// MARK: - Translation Error
+enum TranslationError: LocalizedError {
+    case dictionaryNotFound
+    case cloudServiceUnavailable
+    case invalidInput
+    case networkError(String)
+    case parsingError(String)
+    
+    var errorDescription: String? {
+        switch self {
+        case .dictionaryNotFound:
+            return "Dictionary file not found"
+        case .cloudServiceUnavailable:
+            return "Cloud translation service is unavailable"
+        case .invalidInput:
+            return "Invalid input text"
+        case .networkError(let message):
+            return "Network error: \(message)"
+        case .parsingError(let message):
+            return "Parsing error: \(message)"
+        }
+    }
 }
