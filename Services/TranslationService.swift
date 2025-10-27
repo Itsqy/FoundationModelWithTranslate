@@ -35,9 +35,9 @@ class TranslationService: ObservableObject {
             
             tokenizer.enumerateTokens(in: sentence.startIndex..<sentence.endIndex) { range, _ in
                 let word = String(sentence[range])
-                let cleanWord = word.lowercased().trimmingCharacters(in: .punctuationCharacters)
+//                let cleanWord = word.lowercased().trimmingCharacters(in: .punctuationCharacters)
                 
-                if let translation = dictionaryService.translateWord(cleanWord, to: level) {
+                if let translation = dictionaryService.translateWord(word, to: level) {
                     translatedWords.append(translation)
                 } else {
                     untranslatedWords.append(word)
@@ -111,4 +111,6 @@ class TranslationService: ObservableObject {
     func translateWord(_ word: String, to level: JavaneseLevel) -> String? {
         return dictionaryService.translateWord(word, to: level)
     }
+    
 }
+

@@ -58,3 +58,7 @@ struct TranslationHostView: View {
         return ns.domain == "TranslationErrorDomain" && ns.code == 11
     }
 }
+
+#Preview {
+    TranslationHostView(translator: .init())
+}

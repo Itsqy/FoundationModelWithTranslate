@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var dictionaryService = DictionaryService()
+    @StateObject private var dictionaryService: DictionaryService
+    let reverseService: ReverseTranslationService
     @StateObject private var translationService: TranslationService
     @State private var inputText = ""
     @State private var translatedText = ""
@@ -17,6 +18,8 @@ struct ContentView: View {
     
     init() {
         let dictService = DictionaryService()
+        _dictionaryService = StateObject(wrappedValue: dictService)
+        reverseService = ReverseTranslationService(dictionaryService: dictService)
         _translationService = StateObject(wrappedValue: TranslationService(dictionaryService: dictService))
     }
     

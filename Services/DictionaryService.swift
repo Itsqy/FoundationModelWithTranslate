@@ -92,5 +92,34 @@ class DictionaryService: ObservableObject {
             entry.ngoko.lowercased().contains(lowercaseQuery)
         }
     }
+    
+    func translateFromJavanese(_ word: String) -> String? {
+        let lowercaseWord = word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        for entry in dictionaryEntries {
+            if entry.ngoko.lowercased() == lowercaseWord ||
+                entry.kramaalus.lowercased() == lowercaseWord ||
+                entry.kramainggil.lowercased() == lowercaseWord {
+                return entry.indonesia
+            }
+        }
+        return nil
+    }
+    
+    func translateFromNgoko(_ word: String) -> String? {
+        let lowercaseWord = word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        for entry in dictionaryEntries {
+            if entry.ngoko.lowercased() == lowercaseWord {
+                return entry.indonesia
+            }
+        }
+        return nil
+    }
+
+
+    
 }
+
+
 
