@@ -43,7 +43,7 @@ import Playgrounds
 //        let responseBreakdown = try await sessionBreakdown.respond(to: prompt)
 //
         
-        let result = await reverseNgoko.translateSentence("damel")
+        let result = await reverseNgoko.translateSentence("ngombe")
         print("Intermediate Indonesian:", result) // e.g. "Saya minum"
 
         /// STEP 1: Translate to English first (if needed)
